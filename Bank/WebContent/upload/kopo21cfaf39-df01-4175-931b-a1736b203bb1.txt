@@ -1,0 +1,91 @@
+sudo su
+
+
+apt-get update -y
+apt-get upgrade -y
+apt-get install net-tools -y
+apt-get install vim -y
+
+#telnet 시작
+apt-get install xinetd -y
+apt-get install telnetd -y
+
+cd /etc/xinetd.d 
+touch telnet
+vi telnet
+service telnet
+{
+	disable = no
+	flags = REUSE
+	socket_type = stream
+	wait = no
+	user = root
+	server = /usr/sbin/in.telnetd
+	log_on_failure += USERID
+}
+
+systemctl restart xinetd
+systemctl enable xinetd
+/lib/systemd/systemd-sysv-install enable xinetd
+systemctl status xinetd
+ufw allow 23/tcp
+
+#ssh start
+apt-get install openssh-server -y
+
+systemctl restart ssh
+systemctl enable ssh
+/lib/systemd/systemd-sysv-install enable ssh
+systemctl status ssh
+ufw allow 22/tcp
+
+#try scp
+sudo scp server@192.168.199.130:/home/server/prac/a.txt ./abcdef.txt
+scp ./abcdef.txt server@192.168.199.130:/home/server/prac
+
+
+
+#apache2
+apt-get install apache2 -y
+apache2 -v
+service apache2 restart
+systemctl restart apache2
+systemctl enable apache2
+/lib/systemd/systemd-sysv-install enable apache2
+systemctl status apache2
+vi /etc/apache2/sites-available/000-default.conf 
+vi /etc/apache2/apache2.conf    
+systemctl restart apache2
+ufw allow 80
+
+
+#tomcat9*
+apt-get install tomcat9* -y
+service tomcat9 restart
+vi /var/lib/tomcat9/webapps/ROOT/index.html
+   74  vi /etc/tomcat9/tomcat-users.xml 
+   75  service tomcat9 restart
+
+
+
+#conn
+apt-get install libapache2-mod-jk* -y
+vi /etc/libapache2-mod-jk/workers.properties 
+vi /etc/apache2/sites-available/000-default.conf 
+vi /etc/apache2/mods-available/httpd-jk.conf 
+vi /etc/apache2/mods-available/jk.load 
+vi /etc/tomcat9/server.xml 
+service restart apache2
+service apache2 restart
+service tomcat9 restart
+
+
+
+JAVA_HOME=/usr/local/java/jdk1.8.0_251
+JRE_HOME=$JAVA_HOME/jre
+PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+export JAVA_HOME=/usr/local/java/jdk1.8.0_251
+export JRE_HOME=$JAVA_HOME/jre
+export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+
+jdk1.8.0_251/bin/java -jar fmw_12.2.1.4.0_wls_quick.jar
